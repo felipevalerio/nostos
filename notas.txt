@@ -23,101 +23,14 @@ nono objetivo -> implementar um depth buffer =
 
 =================================================================================== Anotações ===================================================================================
 
+SDL é uma biblioteca que fornece funções que se comunicam diretamente com as funções específicas das API de diferentes sistemas operacionais (Windows, Linux, MacOS etc...)
+Criando uma abstração em cima dessas funções e se tornando uma biblioteca cross plataform.
 
-## 1. Estrutura geral de uma janela Win32
+SDL_CreateWindow -> para criar uma janela
 
-Toda aplicação Win32 clássica segue o mesmo esqueleto:
-
-1. Registrar uma classe de janela (WNDCLASSEXA) — descreve o molde da janela, incluindo ícone, cursor, cor de fundo e, principalmente, a função responsável por tratar as mensagens.
-2. Criar a janela (CreateWindowExA) — instancia uma janela a partir da classe registrada.
-3. Mostrar a janela (ShowWindow + UpdateWindow) — torna a janela visível e solicita a atualização inicial de sua área cliente.
-4. Executar o loop de mensagens (GetMessageA / TranslateMessage / DispatchMessageA) — recebe e distribui as mensagens do sistema.
-5. Tratar as mensagens na WndProc — executa as ações correspondentes a cada mensagem recebida.
-
-
-## 2. WndProc — a função de callback da janela
-
-A WndProc (Window Procedure) é a função responsável por receber e tratar as mensagens enviadas à janela.
-
-LRESULT Wndproc(
-  HWND hwnd,
-  UINT msg,
-  WPARAM wParam,
-  LPARAM lParam
-)
-
-
-	Hwnd: identifica a janela destinatária, ou pode ser zero para certas mensagens.
-
-	Message: identifica o tipo de mensagem, como WM_PAINT.
-
-	WParam: parâmetro adicional cujo significado depende da mensagem.
-
-	LParam: outro parâmetro adicional cujo significado depende da mensagem.
-
-
-WM_PAINT — pedido do sistema para redesenhar a área da janela.
-
-	BeginPaint / EndPaint: par obrigatório. BeginPaint` retorna um `HDC` (device context — "onde" você desenha) e prepara a região a pintar.
-	EndPaint libera esse contexto. Nunca usar GetDC para pintura de WM_PAINT, é sempre BeginPaint.
-
-	GetClientRect: pega o tamanho da área útil da janela (sem bordas/título), usado aqui pra centralizar o retângulo.
-
-	CreateSolidBrush(COLORREF(...)): cria um "pincel" sólido de uma cor. COLORREF é 0x00BBGGRR (ordem **BGR**, não RGB!).
-
-	SelectObject(hdc, blue_brush): "seleciona" o pincel no contexto de dispositivo — a partir daí, tudo que for desenhado usa esse pincel. Retorna o pincel *anterior* (`old_brush`), que deve ser restaurado depois.
-	
-	Rectangle(hdc, left, top, right, bottom): desenha o retângulo preenchido com o pincel selecionado.
-
-
-WM_CLOSE — disparado quando o usuário clica no "X" da janela.
-	
-	DestroyWindow(hwnd): destrói a janela (isso vai gerar a mensagem WM_DESTROY em seguida). Separar `WM_CLOSE` de `WM_DESTROY` permite, 
-	por exemplo, perguntar "deseja salvar?" antes de fechar.
-
-WM_DESTROY — a janela já foi destruída.
-
-	PostQuitMessage(0): posta uma mensagem WM_QUIT na fila, que faz o loop principal (GetMessageA) retornar false e o programa terminar. 
-	Sem isso, o processo fica pendurado mesmo com a janela fechada.
-
-
-## 3. DLLs do Windows e funções
-
-user32.dll -> Biblioteca que contém funções relacionadas à interface gráfica do Windows, incluindo:
-
-	Criação e gerenciamento de janelas.
-
-	Processamento e distribuição de mensagens.
-
-	Entrada do usuário.
-
-	Recursos da interface gráfica.
-
-Exemplos: CreateWindowExW, RegisterClassExW e DispatchMessageW.
-
-
-kernel32.dll -> Biblioteca que disponibiliza funções fundamentais do Windows relacionadas ao 
-gerenciamento de processos, módulos, memória e outros serviços do sistema operacional.
-
-Exemplo: GetModuleHandleW.
-
-
- Step 1 - Learn line rasterization. Implement Xiaolin Wu's line rasterizer to draw a line with some simple anti aliasing - https://en.m.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
-
-Step 2 - Draw a triangle in wireframe. It's just Step 1 three times.
-
-Step 3 - Fill the triangle with a single color by doing three cross products to see if a point is inside the triangle or not. At the simplest and slowest, you can just do this for every point on the screen. You cross product from each vertex to the next vertex clockwise with the vector from the same starting vertex to the point. If you get negative results for each point, it's inside. Draw the color there.
-
-Step 4 - Interpolate colors. Learn barycentric coordinates (which is basically how close each point in a triangle is to each vertex) and interpolate the pixel color based on the colors of the three vertices.
-
-Step 5 - Put the triangle in world space rather than screen space. Start with an orthogonal camera staring down the z axis and it's only a couple extra lines of code to clip triangles behind the camera. Try animating the triangle.
-
-Step 6 - Switch the orthogonal camera for a regular perspective camera with a view frustum with a near clipping plane, far clipping plane, etc. Try animating the camera.
-
-Step 7 - Add z buffering and multiple triangles animating around.
-
-Step 8 - Add lighting. A light contributes its light to a surface based on the dot product of the triangle normal with a vector pointing from the triangle to the light. The color of the light multiplies each element with the color of the surface.
-
-Step 9 - Add texturing. Load a picture from disk using CImg or something and UV map it to the triangle, basically saying this point here in the image is this point on the triangle.
-
-Step 10 - Load models off disk and render. 
+    SDL_CreateWindow(
+        const char* name,
+        int largura,
+        int altura,
+        SDL_WindowFlags flags(SDL_WINDOW_RESIZABLE)
+    );
