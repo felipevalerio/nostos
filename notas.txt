@@ -34,3 +34,7 @@ SDL_CreateWindow -> para criar uma janela
         int altura,
         SDL_WindowFlags flags(SDL_WINDOW_RESIZABLE)
     );
+
+
+pitch é a largura da imagem/texture em bytes
+framebuffer pode ser pensado como uma representação em memória da janela (pixels) em que pode-se fazer manipulações nos pixels e depois renderizar isso na janela.
