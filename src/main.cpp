@@ -18,8 +18,8 @@ int main() {
 
     window = SDL_CreateWindow(
         "Nostos",
-        WIDTH,
-        HEIGHT,
+        WIDTH * 4,
+        HEIGHT * 4,
         SDL_WINDOW_RESIZABLE
     );
 
@@ -31,6 +31,7 @@ int main() {
         WIDTH, HEIGHT
     );
 
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
     bool running = true;
 
@@ -42,7 +43,15 @@ int main() {
             }
         }
 
-        framebuffer[0] = 0x0000FF00;
+        for (size_t y = 0; y < 10; y++) {
+            for (size_t x = 0; x < 10; x++) {
+                
+                uint32_t index = y * WIDTH + x;
+                framebuffer[index] = 0x0000FF00;
+            }
+        }
+        
+
 
         // copia o conteúdo do framebuffer para o texture
         SDL_UpdateTexture(
