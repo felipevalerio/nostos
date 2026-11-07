@@ -35,6 +35,7 @@ SDL_CreateWindow -> para criar uma janela
         SDL_WindowFlags flags(SDL_WINDOW_RESIZABLE)
     );
 
+SDL_CreateRenderer -> cria um contexto de renderização 2D para uma janela especificada
 
 pitch é a largura da imagem/texture em bytes
 framebuffer pode ser pensado como uma representação em memória da janela (pixels) em que pode-se fazer manipulações nos pixels e depois renderizar isso na janela.

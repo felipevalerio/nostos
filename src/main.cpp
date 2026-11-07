@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <iostream>
 #include <vector>
 #include <cstdint>
 
@@ -6,6 +7,20 @@ const int WIDTH = 320;
 const int HEIGHT = 200;
 
 std::vector<uint32_t> framebuffer(WIDTH * HEIGHT);
+
+
+void putPixel(uint32_t x, uint32_t y, uint32_t color) {
+
+    if (x < WIDTH && y < HEIGHT) {
+
+        uint32_t index = y * WIDTH + x;
+        framebuffer[index] = color;
+    } else {
+        std::cout << "Out of bounds!" << std::endl;
+    }
+    
+}
+
 
 int main() {
 
@@ -45,13 +60,11 @@ int main() {
 
         for (size_t y = 0; y < 10; y++) {
             for (size_t x = 0; x < 10; x++) {
-                
                 uint32_t index = y * WIDTH + x;
                 framebuffer[index] = 0x0000FF00;
             }
         }
         
-
 
         // copia o conteúdo do framebuffer para o texture
         SDL_UpdateTexture(
